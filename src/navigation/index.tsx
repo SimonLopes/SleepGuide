@@ -34,11 +34,15 @@ function MainTabs() {
         name="Settings"
         component={Settings}
         options={{
+          tabBarItemStyle: {
+            flex: 1,
+
+          },
           tabBarIcon: ({ focused }) => (
             <View
               style={{
                 justifyContent: "center",
-                alignItems: "center",
+                flex: 1,
                 height: 70,
               }}
             >
@@ -87,6 +91,7 @@ function MainTabs() {
                 justifyContent: "center",
                 alignItems: "center",
                 height: 70,
+                flex:1
               }}
             >
               <Ionicons

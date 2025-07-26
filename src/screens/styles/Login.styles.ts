@@ -13,10 +13,9 @@ export const getStyles = (theme: ThemeType) => {
       alignItems: "center",
     },
     logo: {
-      width: 100,
-      height: 100,
+      width: 150,
+      height: 150,
       resizeMode: "contain",
-      marginBottom: 30,
     },
     title: {
       fontSize: 26,

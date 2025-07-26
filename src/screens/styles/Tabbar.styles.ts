@@ -6,6 +6,10 @@ export const getStyles = (theme: ThemeType) => {
 
   return StyleSheet.create({
     tabbarContainer: {
+      flex: 1,
+      flexDirection: "row",
+      justifyContent: "space-between",
+      alignItems: "center",
       height: 70,
       borderTopWidth: 0,
       backgroundColor: colors.card,
@@ -16,11 +20,6 @@ export const getStyles = (theme: ThemeType) => {
       shadowColor: "#000",
       shadowOpacity: 0.06,
       shadowOffset: { width: 10, height: 10 },
-      flex: 1,
-      flexDirection: "row",
-      alignContent: "center",
-      alignItems: "center",
-      justifyContent: "center",
     },
   });
 };

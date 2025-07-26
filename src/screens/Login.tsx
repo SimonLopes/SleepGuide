@@ -12,6 +12,9 @@ import { RootStackParamList } from "../types/navigation";
 import { getStyles } from "./styles/Login.styles";
 import { ThemeContext } from "@context/ThemeContext";
 import { AuthContext } from "@context/AuthContext";
+import { userLogin } from "src/api/login";
+import { UserDTO } from "src/api/login/types";
+import { FirebaseError } from "firebase/app";
 
 export default function Login() {
   const { theme } = useContext(ThemeContext);
@@ -22,22 +25,18 @@ export default function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
-  const handleLogin = () => {
+  const handleLogin = async () => {
     if (email === "" || password === "") {
       Alert.alert("Erro", "Preencha todos os campos");
       return;
     }
 
-    if (email === "teste@exemplo.com" && password === "123456") {
-      login(email);
-    } else {
-      Alert.alert("Erro", "Credenciais inválidas");
-    }
+    await login(email, password);
   };
 
   return (
     <View style={styles.container}>
-      {/* <Image source={require("../../../assets/logo.png")} style={styles.logo} /> */}
+      <Image source={require("../../assets/icon.png")} style={styles.logo} />
 
       <Text style={styles.title}>Entrar</Text>
 

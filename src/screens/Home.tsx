@@ -173,7 +173,9 @@ const Home = () => {
                 size={18}
                 style={styles.icons}
               />
-              <Text style={styles.cardTitle}>Próximo horário para {mode === 'sleep' ? 'acordar' : 'dormir'}</Text>
+              <Text style={styles.cardTitle}>
+                Próximo horário para {mode === "sleep" ? "acordar" : "dormir"}
+              </Text>
             </View>
             <View style={{ flexDirection: "row", gap: 10 }}>
               <Text style={styles.cardTime}>{recommendations[0]?.time}</Text>
