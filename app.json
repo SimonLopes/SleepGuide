@@ -29,6 +29,12 @@
     },
     "plugins": [
       "@bacons/apple-targets"
-    ]
+    ],
+    "extra": {
+      "eas": {
+        "projectId": "78ebb34a-9eb8-4eca-b22e-09529fe16551"
+      }
+    },
+    "owner": "simonlopes"
   }
 }

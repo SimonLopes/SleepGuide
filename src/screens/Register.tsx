@@ -14,6 +14,7 @@ import { getStyles } from "./styles/Register.styles";
 import { ThemeContext } from "@context/ThemeContext";
 import { AuthContext } from "@context/AuthContext";
 import * as ImagePicker from "expo-image-picker";
+import { userRegister } from "src/api/register";
 
 export default function Register() {
   const { theme } = useContext(ThemeContext);
@@ -27,17 +28,29 @@ export default function Register() {
   const [confirmPassword, setConfirmPassword] = useState("");
   const [password, setPassword] = useState("");
 
-  const handleLogin = () => {
-    if (email === "" || password === "") {
+  const handleLogin = async () => {
+    if (
+      name === "" ||
+      dateOfBirth === "" ||
+      email === "" ||
+      password === "" ||
+      confirmPassword === ""
+    ) {
       Alert.alert("Erro", "Preencha todos os campos");
       return;
     }
-
-    if (email === "teste@exemplo.com" && password === "123456") {
-      login(email);
-    } else {
-      Alert.alert("Erro", "Credenciais inválidas");
+    if (password !== confirmPassword) {
+      Alert.alert("Erro", "As senhas não coincidem");
+      return;
     }
+    await userRegister({
+      name,
+      dateOfBirth,
+      email,
+      password,
+    }).then((response) => {
+      Alert.alert("Sucesso", "Conta criada com sucesso!");
+    });
   };
 
   const [imageUri, setImageUri] = useState("https://i.pravatar.cc/150?img=12");
@@ -71,9 +84,7 @@ export default function Register() {
       <Text style={styles.title}>Cadastrar-se</Text>
       <TouchableOpacity style={styles.avatarContainer} onPress={pickImage}>
         <Image source={{ uri: imageUri }} style={styles.avatar} />
-        <View
-          style={styles.cameraIconContainer}
-        >
+        <View style={styles.cameraIconContainer}>
           <Text style={styles.cameraIconText}>📷</Text>
         </View>
       </TouchableOpacity>

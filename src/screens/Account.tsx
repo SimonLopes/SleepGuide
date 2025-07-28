@@ -22,8 +22,8 @@ export default function Account() {
             source={{ uri: "https://i.pravatar.cc/150?img=12" }}
             style={styles.avatar}
           />
-          <Text style={styles.name}>{user}</Text>
-          <Text style={styles.email}>{user?.toLowerCase()}@exemplo.com</Text>
+          <Text style={styles.name}>{user?.displayName || user?.email}</Text>
+          <Text style={styles.email}>{user?.email}</Text>
         </View>
 
         <View style={styles.actions}>
@@ -40,7 +40,10 @@ export default function Account() {
             <Text style={styles.actionText}>Suporte</Text>
           </TouchableOpacity>
 
-          <TouchableOpacity style={styles.actionItem} onPress={() => navigation.navigate("AboutApp")}>
+          <TouchableOpacity
+            style={styles.actionItem}
+            onPress={() => navigation.navigate("AboutApp")}
+          >
             <Ionicons
               name="information-circle-outline"
               size={22}
