@@ -14,6 +14,11 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import storageEmitter from "src/utils/storageEvents";
 import { MaskedTextInput } from "react-native-mask-text";
 import { Ionicons } from "@expo/vector-icons";
+import { requireNativeModule } from "expo-modules-core";
+
+const Sleepguidewidget = requireNativeModule("Sleepguidewidget");
+
+
 
 const Settings = () => {
   const { theme } = useContext(ThemeContext);
@@ -24,6 +29,15 @@ const Settings = () => {
   const [recommendationType, setRecommendationType] = useState<
     "wake" | "sleep"
   >("wake");
+
+  const syncWithWidget = async () => {
+    console.log("Módulo Sleepguidewidget:", Sleepguidewidget);
+    try {
+      await Sleepguidewidget.setSleepWidgetData(wakeUpTime, sleepTime, recommendationType);
+    } catch (e) {
+      console.error("Erro ao atualizar widget:", e);
+    }
+  };  
 
   useEffect(() => {
     const loadData = async () => {
@@ -57,6 +71,7 @@ const Settings = () => {
       alert("Por favor, insira um horário válido no formato HH:MM");
     }
     storageEmitter.emit("storageChanged");
+    syncWithWidget();
   };
 
   const handleChangeSleepTime = async () => {
@@ -73,12 +88,14 @@ const Settings = () => {
       alert("Por favor, insira um horário válido no formato HH:MM");
     }
     storageEmitter.emit("storageChanged");
+    syncWithWidget();
   };
 
   const handleChangeRecommendation = async (rec: "wake" | "sleep") => {
     setRecommendationType(rec);
     await AsyncStorage.setItem("sleepMode", rec);
     storageEmitter.emit("storageChanged");
+    syncWithWidget();
   };
 
   return (

@@ -1,5 +1,5 @@
 import React, { useCallback, useContext, useEffect, useState } from "react";
-import { View, Text, ScrollView } from "react-native";
+import { View, Text, ScrollView, TouchableOpacity } from "react-native";
 import CircularProgress from "react-native-circular-progress-indicator";
 import { ThemeContext } from "@context/ThemeContext";
 import { getStyles } from "./styles/Home.styles";
@@ -9,6 +9,7 @@ import { Ionicons } from "@expo/vector-icons";
 import { useSleepCalculator } from "@hooks/useSleepCalculate";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useFocusEffect } from "@react-navigation/native";
+
 
 const Home = () => {
   const { theme } = useContext(ThemeContext);
@@ -49,21 +50,20 @@ const Home = () => {
     }, [])
   );
 
-  const { idealTime, recommendations } = useSleepCalculator({
+  const { idealTime, cycles } = useSleepCalculator({
     mode,
-    wakeUpTime: wakeUp ? parseTimeString(wakeUp) : { hour: 7, minute: 0 },
-    sleepTime: sleep ? parseTimeString(sleep) : { hour: 23, minute: 0 },
+    wakeUpTime: wakeUp ? wakeUp : '07:00',
+    sleepTime: sleep ? sleep : '23:00',
   });
 
   console.log("wake:", mode);
-  console.log("Recommendations:", recommendations);
+  console.log("Recommendations:", cycles);
   console.log("Ideal Time:", idealTime);
 
   return (
     <ScreenWrapper>
       <ScrollView contentContainerStyle={styles.container}>
         <Text style={styles.title}>Seu Guia de Sono</Text>
-
         <View style={styles.gridCard}>
           <View style={styles.card}>
             <View style={{ flex: 1, gap: 10 }}>
@@ -93,29 +93,24 @@ const Home = () => {
               <Text style={styles.cardTitle}>Ideal para Dormir</Text>
             </View>
             <Text style={styles.cardTime}>
-              {mode === "wake" ? idealTime : sleep}
+              {idealTime.time}
             </Text>
           </View>
           <CircularProgress
             value={
-              (recommendations.find((item) => item.time === idealTime)
-                ?.durationHours! /
-                24) *
-              100
+              (idealTime.durationHours! /
+                24) * 100
             }
             maxValue={100}
             radius={35}
-            title={`${formatHoursDecimalToHHMM(
-              recommendations.find((item) => item.time === idealTime)
-                ?.durationHours!
-            )}`}
+            title={`${formatHoursDecimalToHHMM(idealTime.durationHours!)}`}
             subtitle={"horas de sono"}
             showProgressValue={false}
             progressValueColor={theme === "dark" ? "#fff" : "#000"}
             titleColor={theme === "dark" ? "#fff" : "#000"}
             subtitleColor={theme === "dark" ? "#aaa" : "#555"}
             activeStrokeColor={
-              recommendations[0]?.durationHours >= 7 ? "#4CAF50" : "#d63636"
+              cycles[0]?.durationHours >= 7 ? "#4CAF50" : "#d63636"
             }
             inActiveStrokeColor="#ddd"
             inActiveStrokeOpacity={0.2}
@@ -132,30 +127,26 @@ const Home = () => {
               <Text style={styles.cardTitle}>Ideal para Acordar</Text>
             </View>
             <Text style={styles.cardTime}>
-              {mode === "sleep" ? idealTime : wakeUp}
+              {mode === "sleep" ? idealTime.time : wakeUp}
             </Text>
           </View>
 
           <CircularProgress
             value={
-              (recommendations.find((item) => item.time === idealTime)
-                ?.durationHours! /
+              (idealTime.durationHours! /
                 24) *
               100
             }
             maxValue={100}
             radius={35}
-            title={`${formatHoursDecimalToHHMM(
-              recommendations.find((item) => item.time === idealTime)
-                ?.durationHours!
-            )}`}
+            title={`${formatHoursDecimalToHHMM(idealTime.durationHours!)}`}
             subtitle={"horas de sono"}
             showProgressValue={false}
             progressValueColor={theme === "dark" ? "#fff" : "#000"}
             titleColor={theme === "dark" ? "#fff" : "#000"}
             subtitleColor={theme === "dark" ? "#aaa" : "#555"}
             activeStrokeColor={
-              recommendations[0]?.durationHours >= 7 ? "#4CAF50" : "#d63636"
+              cycles[0]?.durationHours >= 7 ? "#4CAF50" : "#d63636"
             }
             inActiveStrokeColor="#ddd"
             inActiveStrokeOpacity={0.3}
@@ -178,13 +169,13 @@ const Home = () => {
               </Text>
             </View>
             <View style={{ flexDirection: "row", gap: 10 }}>
-              <Text style={styles.cardTime}>{recommendations[0]?.time}</Text>
+              <Text style={styles.cardTime}>{cycles[0]?.time}</Text>
               <ScrollView
                 horizontal={true}
                 showsHorizontalScrollIndicator={false}
               >
                 <View style={styles.cardTimesLine}>
-                  {recommendations.map((item, index) => {
+                  {cycles.map((item, index) => {
                     if (index === 0) return null;
                     return (
                       <Text key={index} style={styles.cardTimes}>
@@ -197,17 +188,17 @@ const Home = () => {
             </View>
           </View>
           <CircularProgress
-            value={(recommendations[0]?.durationHours! / 24) * 100}
+            value={(cycles[0]?.durationHours! / 24) * 100}
             maxValue={100}
             radius={35}
-            title={`${recommendations[0]?.durationHours!}`}
+            title={`${formatHoursDecimalToHHMM(cycles[0]?.durationHours!)}`}
             subtitle={"horas de sono"}
             showProgressValue={false}
             progressValueColor={theme === "dark" ? "#fff" : "#000"}
             titleColor={theme === "dark" ? "#fff" : "#000"}
             subtitleColor={theme === "dark" ? "#aaa" : "#555"}
             activeStrokeColor={
-              recommendations[0]?.durationHours >= 7 ? "#4CAF50" : "#d63636"
+              cycles[0]?.durationHours >= 7 ? "#4CAF50" : "#d63636"
             }
             inActiveStrokeColor="#ddd"
             inActiveStrokeOpacity={0.2}

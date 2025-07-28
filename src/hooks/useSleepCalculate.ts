@@ -1,99 +1,111 @@
-import { useMemo } from "react";
-import dayjs from "dayjs";
+import { formatHoursDecimalToHHMM } from "src/utils/time";
 
-export interface SleepRecommendation {
-  time: string;
+export interface TimeData {
   durationHours: number;
+  time: string;
 }
 
-interface SleepData {
-  idealTime: string;
-  recommendations: SleepRecommendation[];
-}
-interface TimeInput {
-  hour: number;
-  minute: number;
+export interface CalculateTimesData {
+  cycles: TimeData[];
+  idealTime: TimeData;
 }
 
-type RecommendationMode = "sleep" | "wake";
+function formatDateToHHMM(date: Date): string {
+  const hours = date.getHours().toString().padStart(2, "0");
+  const minutes = date.getMinutes().toString().padStart(2, "0");
+  return `${hours}:${minutes}`;
+}
+
+export function calculateSleepTimes(wakeTime: string): CalculateTimesData {
+  const SLEEP_CYCLE_MINUTES = 90;
+  const IDEAL_SLEEP_HOURS = 8;
+
+  const [wakeHour, wakeMinute] = wakeTime.split(":").map(Number);
+
+  // Horário atual
+  const now = new Date();
+  console.log("sleepDate:", now.getHours(), now.getMinutes());
+  let wakeDate = new Date();
+  wakeDate.setHours(wakeHour, wakeMinute, 0, 0);
+
+  // Se o horário já passou hoje, ajusta para o próximo dia
+  if (wakeDate <= now) {
+    wakeDate.setDate(wakeDate.getDate() + 1);
+  }
+
+  const sleepCycles: TimeData[] = [];
+
+  for (let cycles = 6; cycles >= 3; cycles--) {
+    const totalMinutes = cycles * SLEEP_CYCLE_MINUTES;
+    const sleepTime = new Date(wakeDate.getTime() - totalMinutes * 60 * 1000);
+
+    if (sleepTime > now) {
+      const hoursDecimal = sleepTime.getHours() + sleepTime.getMinutes() / 60;
+      sleepCycles.push({
+        time: formatHoursDecimalToHHMM(hoursDecimal),
+        durationHours: cycles * 1.5,
+      });
+    }
+  }
+
+  const idealSleepDate = new Date(wakeDate.getTime() - IDEAL_SLEEP_HOURS * 60 * 60 * 1000);
+  const idealDecimal = idealSleepDate.getHours() + idealSleepDate.getMinutes() / 60;
+
+  return {
+    cycles: sleepCycles.length > 0 ? sleepCycles : [{
+      time: formatHoursDecimalToHHMM(now.getHours() + now.getMinutes() / 60),
+      durationHours: 0
+    }],
+    idealTime: {
+      time: formatHoursDecimalToHHMM(idealDecimal),
+      durationHours: IDEAL_SLEEP_HOURS,
+    },
+  };
+}
+
+function calculateWakeTimes(sleepTime: string): CalculateTimesData {
+  const SLEEP_CYCLE_MINUTES = 90;
+  const IDEAL_SLEEP_HOURS = 8;
+
+  const [sleepHour, sleepMinute] = sleepTime.split(":").map(Number);
+  const sleepDate = new Date();
+  sleepDate.setHours(sleepHour, sleepMinute, 0, 0);
+  
+  const cycles: TimeData[] = [];
+
+  for (let i = 1; i <= 8; i++) {
+    const totalMinutes = i * SLEEP_CYCLE_MINUTES;
+    const wakeDate = new Date(sleepDate.getTime() + totalMinutes * 60000);
+    
+    cycles.push({
+      durationHours: parseFloat((totalMinutes / 60).toFixed(2)),
+      time: formatDateToHHMM(wakeDate),
+    });
+  }
+
+  const idealWakeDate = new Date(sleepDate.getTime() + IDEAL_SLEEP_HOURS * 60 * 60000);
+
+  return {
+    cycles,
+    idealTime: {
+      durationHours: IDEAL_SLEEP_HOURS,
+      time: formatDateToHHMM(idealWakeDate),
+    },
+  };
+}
 
 export function useSleepCalculator({
+  mode,
   wakeUpTime,
   sleepTime,
-  mode,
 }: {
-  wakeUpTime: TimeInput;
-  sleepTime: TimeInput;
-  mode: RecommendationMode;
-}): SleepData {
-  const SLEEP_CYCLE_MINUTES = 90;
-  const IDEAL_SLEEP_HOURS = 7;
-  const MIN_SLEEP_HOURS = 6;
-
-  const calculate = useMemo(() => {
-    const buildDayjsFromTime = ({ hour, minute }: TimeInput) =>
-      dayjs().hour(hour).minute(minute).second(0).millisecond(0);
-
-    if (mode === "wake") {
-      let wake = buildDayjsFromTime(wakeUpTime);
-      const now = dayjs();
-      if (wake.isBefore(now)) {
-        wake = wake.add(1, "day");
-      }
-
-      const recommendations: SleepRecommendation[] = [];
-
-      for (let cycles = 3; cycles <= 8; cycles++) {
-        const totalSleepMinutes = cycles * SLEEP_CYCLE_MINUTES;
-        const recommendedTime = wake.subtract(totalSleepMinutes, "minute");
-        if (recommendedTime.isAfter(now)) {
-          recommendations.push({
-            time: recommendedTime.format("HH:mm"),
-            durationHours: +(wake.diff(recommendedTime, "minute") / 60).toFixed(
-              1
-            ),
-          });
-        }
-      }
-
-      const ideal = recommendations.at(-4);
-
-      return {
-        idealTime: ideal?.time || "",
-        recommendations: recommendations.reverse(),
-      };
-    }
-
-    if (mode === "sleep") {
-      const sleep = buildDayjsFromTime(sleepTime);
-      const recommendations: SleepRecommendation[] = [];
-
-      for (let cycles = 4; cycles <= 9; cycles++) {
-        const totalSleepMinutes = cycles * SLEEP_CYCLE_MINUTES;
-        const recommendedTime = sleep.add(totalSleepMinutes, "minute");
-        recommendations.push({
-          time: recommendedTime.format("HH:mm"),
-          durationHours: +(recommendedTime.diff(sleep, "minute") / 60).toFixed(
-            1
-          ),
-        });
-      }
-
-      const ideal = recommendations.find(
-        (r) => Math.abs(r.durationHours - IDEAL_SLEEP_HOURS) <= 0.5
-      );
-
-      return {
-        idealTime: ideal?.time || "",
-        recommendations,
-      };
-    }
-
-    return {
-      idealTime: "",
-      recommendations: [],
-    };
-  }, [wakeUpTime, sleepTime, mode]);
-
-  return calculate;
+  mode: "wake" | "sleep";
+  wakeUpTime: string;
+  sleepTime: string;
+}): CalculateTimesData {
+  if (mode === "wake") {
+    return calculateSleepTimes(wakeUpTime);
+  } else {
+    return calculateWakeTimes(sleepTime);
+  }
 }
