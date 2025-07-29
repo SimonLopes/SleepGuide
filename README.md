@@ -73,5 +73,5 @@ Este projeto está sob a licença MIT.
 
 ## 🙋‍♂️ Autor
 
-Desenvolvido com carinho por [Seu Nome]
+Desenvolvido com carinho por Simon Lopes.
 [LinkedIn](https://www.linkedin.com/in/simon-lopes). • [GitHub](https://github.com/SimonLopes)
