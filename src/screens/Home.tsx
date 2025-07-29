@@ -56,10 +56,6 @@ const Home = () => {
     sleepTime: sleep ? sleep : '23:00',
   });
 
-  console.log("wake:", mode);
-  console.log("Recommendations:", cycles);
-  console.log("Ideal Time:", idealTime);
-
   return (
     <ScreenWrapper>
       <ScrollView contentContainerStyle={styles.container}>

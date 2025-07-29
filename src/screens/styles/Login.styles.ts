@@ -5,6 +5,10 @@ export const getStyles = (theme: ThemeType) => {
   const colors = themes[theme];
 
   return StyleSheet.create({
+    safeView: {
+      flex: 1,
+      backgroundColor: colors.background,
+    },
     container: {
       flex: 1,
       backgroundColor: colors.background,

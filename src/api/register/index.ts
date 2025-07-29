@@ -1,7 +1,6 @@
 import { createUserWithEmailAndPassword, updateProfile } from "firebase/auth";
 import { doc, setDoc } from "firebase/firestore";
-import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
-import { auth, db, storage } from "../firebase";
+import { auth, db } from "../firebase";
 
 type UserRegisterProps = {
   name: string;
@@ -26,19 +25,16 @@ export async function userRegister({
     );
     const user = userCredential.user;
 
-    // // Upload da foto
     // const imageRef = ref(storage, `profileImages/${user.uid}.jpg`);
     // const img = await fetch(photoLocal);
     // const blob = await img.blob();
     // await uploadBytes(imageRef, blob);
     // const fotoURL = await getDownloadURL(imageRef);
 
-    // Atualizar nome e foto no perfil do Firebase Auth
     await updateProfile(user, {
       displayName: name,
     });
 
-    // Salvar dados no Firestore
     await setDoc(doc(db, "users", user.uid), {
       name,
       dateOfBirth,
@@ -46,7 +42,6 @@ export async function userRegister({
       createdAt: new Date(),
     });
 
-    console.log("Usuário cadastrado com sucesso!");
   } catch (error) {
     console.error("Erro ao cadastrar:", error);
   }

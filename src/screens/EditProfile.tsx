@@ -1,17 +1,18 @@
+import ScreenWrapper from "@components/ScreenWrapper";
+import { useTheme } from "@hooks/useTheme";
+import * as ImagePicker from "expo-image-picker";
 import React, { useState } from "react";
 import {
-  View,
+  Image,
+  Platform,
+  ScrollView,
   Text,
   TextInput,
   TouchableOpacity,
-  ScrollView,
-  Image,
-  Platform,
+  View,
 } from "react-native";
-import * as ImagePicker from "expo-image-picker";
-import { useTheme } from "@hooks/useTheme";
+import MaskInput, { Masks } from "react-native-mask-input";
 import { getStyles } from "./styles/EditProfile.styles";
-import ScreenWrapper from "@components/ScreenWrapper";
 
 export function EditProfile() {
   const { colors, theme } = useTheme();
@@ -78,7 +79,8 @@ export function EditProfile() {
 
         <View style={styles.inputGroup}>
           <Text style={styles.label}>Data de nascimento</Text>
-          <TextInput
+          <MaskInput
+            mask={Masks.DATE_DDMMYYYY}
             style={[
               styles.input,
               {

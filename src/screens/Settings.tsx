@@ -15,6 +15,7 @@ import storageEmitter from "src/utils/storageEvents";
 import { MaskedTextInput } from "react-native-mask-text";
 import { Ionicons } from "@expo/vector-icons";
 import { requireNativeModule } from "expo-modules-core";
+import MaskInput, { Mask } from "react-native-mask-input";
 
 const Sleepguidewidget = requireNativeModule("Sleepguidewidget");
 
@@ -31,13 +32,29 @@ const Settings = () => {
   >("wake");
 
   const syncWithWidget = async () => {
-    console.log("Módulo Sleepguidewidget:", Sleepguidewidget);
     try {
       await Sleepguidewidget.setSleepWidgetData(wakeUpTime, sleepTime, recommendationType);
     } catch (e) {
       console.error("Erro ao atualizar widget:", e);
     }
   };  
+
+  const timeMask: Mask = (value?: string) => {
+    const text = value || "";
+    const cleanTime = text.replace(/\D+/g, '')
+    
+    const hourFirstDigit = /[012]/
+    let hourSecondDigit = /\d/
+    
+    if (cleanTime.charAt(0) === "2") {
+      hourSecondDigit = /[0123]/
+    }
+    
+    const minuteFirstDigit = /[012345]/
+    const minuteSecondDigit = /\d/
+
+    return [hourFirstDigit, hourSecondDigit , ":", minuteFirstDigit , minuteSecondDigit]
+  }
 
   useEffect(() => {
     const loadData = async () => {
@@ -112,11 +129,8 @@ const Settings = () => {
               <Ionicons name="sunny-outline" size={18} style={styles.icons} />
               <Text style={styles.cardTitle}>Horário de acordar</Text>
             </View>
-            <MaskedTextInput
-              type="time"
-              options={{
-                timeFormat: "HH:mm",
-              }}
+            <MaskInput
+              mask={timeMask}
               value={wakeUpTime}
               onChangeText={(text) => setWakeUpTime(text)}
               onEndEditing={handleChangeWakeUpTime}
@@ -135,11 +149,8 @@ const Settings = () => {
               <Ionicons name="moon-outline" size={18} style={styles.icons} />
               <Text style={styles.cardTitle}>Horário de dormir</Text>
             </View>
-            <MaskedTextInput
-              type="time"
-              options={{
-                timeFormat: "HH:mm",
-              }}
+            <MaskInput
+              mask={timeMask}
               style={styles.input}
               value={sleepTime}
               onChangeText={(text) => setSleepTime(text)}

@@ -1,20 +1,21 @@
+import { AuthContext } from "@context/AuthContext";
+import { ThemeContext } from "@context/ThemeContext";
+import { NavigationProp, useNavigation } from "@react-navigation/native";
 import React, { useContext, useState } from "react";
 import {
-  View,
+  Alert,
+  Image,
+  Keyboard,
+  KeyboardAvoidingView,
+  Platform,
+  ScrollView,
   Text,
   TextInput,
   TouchableOpacity,
-  Image,
-  Alert,
+  TouchableWithoutFeedback,
 } from "react-native";
-import { useNavigation, NavigationProp } from "@react-navigation/native";
 import { RootStackParamList } from "../types/navigation";
 import { getStyles } from "./styles/Login.styles";
-import { ThemeContext } from "@context/ThemeContext";
-import { AuthContext } from "@context/AuthContext";
-import { userLogin } from "src/api/login";
-import { UserDTO } from "src/api/login/types";
-import { FirebaseError } from "firebase/app";
 
 export default function Login() {
   const { theme } = useContext(ThemeContext);
@@ -22,6 +23,7 @@ export default function Login() {
   const styles = getStyles(theme);
   const navigation = useNavigation<NavigationProp<RootStackParamList>>();
 
+  const [loading, setLoading] = useState<boolean>(false);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
@@ -30,42 +32,60 @@ export default function Login() {
       Alert.alert("Erro", "Preencha todos os campos");
       return;
     }
-
+    //setLoading(true);
     await login(email, password);
+    //setLoading(false);
   };
 
   return (
-    <View style={styles.container}>
-      <Image source={require("../../assets/icon.png")} style={styles.logo} />
-
-      <Text style={styles.title}>Entrar</Text>
-
-      <TextInput
-        style={styles.input}
-        placeholder="E-mail"
-        placeholderTextColor="#999"
-        value={email}
-        onChangeText={setEmail}
-        keyboardType="email-address"
-        autoCapitalize="none"
-      />
-
-      <TextInput
-        style={styles.input}
-        placeholder="Senha"
-        placeholderTextColor="#999"
-        value={password}
-        onChangeText={setPassword}
-        secureTextEntry
-      />
-
-      <TouchableOpacity style={styles.button} onPress={handleLogin}>
-        <Text style={styles.buttonText}>Entrar</Text>
-      </TouchableOpacity>
-
-      <TouchableOpacity onPress={() => navigation.navigate("Register")}>
-        <Text style={styles.registerLink}>Criar uma conta</Text>
-      </TouchableOpacity>
-    </View>
+    <KeyboardAvoidingView
+      style={styles.safeView}
+      behavior={Platform.OS === "ios" ? "padding" : "height"}
+      keyboardVerticalOffset={Platform.OS === "ios" ? 40 : 0}
+    >
+      <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+        <ScrollView
+          contentContainerStyle={styles.container}
+          keyboardShouldPersistTaps="handled"
+        >
+          {loading ? (
+            <Text style={{ color: "#999", marginBottom: 20, fontSize: 16 }}>
+              Carregando...
+            </Text>
+          ) : (
+            <>
+              <Image
+                source={require("../../assets/icon.png")}
+                style={styles.logo}
+              />
+              <Text style={styles.title}>Entrar</Text>
+              <TextInput
+                style={styles.input}
+                placeholder="E-mail"
+                placeholderTextColor="#999"
+                value={email}
+                onChangeText={setEmail}
+                keyboardType="email-address"
+                autoCapitalize="none"
+              />
+              <TextInput
+                style={styles.input}
+                placeholder="Senha"
+                placeholderTextColor="#999"
+                value={password}
+                onChangeText={setPassword}
+                secureTextEntry
+              />
+              <TouchableOpacity style={styles.button} onPress={handleLogin}>
+                <Text style={styles.buttonText}>Entrar</Text>
+              </TouchableOpacity>
+              <TouchableOpacity onPress={() => navigation.navigate("Register")}>
+                <Text style={styles.registerLink}>Criar uma conta</Text>
+              </TouchableOpacity>
+            </>
+          )}
+        </ScrollView>
+      </TouchableWithoutFeedback>
+    </KeyboardAvoidingView>
   );
 }

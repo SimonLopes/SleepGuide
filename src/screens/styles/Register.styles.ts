@@ -5,6 +5,11 @@ export const getStyles = (theme: ThemeType) => {
   const colors = themes[theme];
 
   return StyleSheet.create({
+    safeView: {
+      flex: 1,
+      backgroundColor: colors.background,
+      paddingVertical: 30,
+    },
     container: {
       flex: 1,
       backgroundColor: colors.background,

@@ -1,20 +1,25 @@
+import { AuthContext } from "@context/AuthContext";
+import { ThemeContext } from "@context/ThemeContext";
+import { NavigationProp, useNavigation } from "@react-navigation/native";
+import * as ImagePicker from "expo-image-picker";
 import React, { useContext, useState } from "react";
 import {
-  View,
+  Alert,
+  Image,
+  Keyboard,
+  KeyboardAvoidingView,
+  Platform,
+  ScrollView,
   Text,
   TextInput,
   TouchableOpacity,
-  Image,
-  Alert,
-  Platform,
+  TouchableWithoutFeedback,
+  View,
 } from "react-native";
-import { useNavigation, NavigationProp } from "@react-navigation/native";
+import MaskInput, { Masks } from "react-native-mask-input";
+import { userRegister } from "src/api/register";
 import { RootStackParamList } from "../types/navigation";
 import { getStyles } from "./styles/Register.styles";
-import { ThemeContext } from "@context/ThemeContext";
-import { AuthContext } from "@context/AuthContext";
-import * as ImagePicker from "expo-image-picker";
-import { userRegister } from "src/api/register";
 
 export default function Register() {
   const { theme } = useContext(ThemeContext);
@@ -78,69 +83,80 @@ export default function Register() {
   }
 
   return (
-    <View style={styles.container}>
-      {/* <Image source={require("../../../assets/logo.png")} style={styles.logo} /> */}
+    <KeyboardAvoidingView
+      style={styles.safeView}
+      behavior={Platform.OS === "ios" ? "padding" : "height"}
+    >
+      <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+        <ScrollView
+          contentContainerStyle={styles.container}
+          keyboardShouldPersistTaps="handled"
+        >
+          {/* <Image source={require("../../../assets/logo.png")} style={styles.logo} /> */}
 
-      <Text style={styles.title}>Cadastrar-se</Text>
-      <TouchableOpacity style={styles.avatarContainer} onPress={pickImage}>
-        <Image source={{ uri: imageUri }} style={styles.avatar} />
-        <View style={styles.cameraIconContainer}>
-          <Text style={styles.cameraIconText}>📷</Text>
-        </View>
-      </TouchableOpacity>
+          <Text style={styles.title}>Cadastrar-se</Text>
+          <TouchableOpacity style={styles.avatarContainer} onPress={pickImage}>
+            <Image source={{ uri: imageUri }} style={styles.avatar} />
+            <View style={styles.cameraIconContainer}>
+              <Text style={styles.cameraIconText}>📷</Text>
+            </View>
+          </TouchableOpacity>
 
-      <TextInput
-        style={styles.input}
-        placeholder="Nome"
-        placeholderTextColor="#999"
-        value={name}
-        onChangeText={setName}
-        keyboardType="name-phone-pad"
-        autoCapitalize="none"
-      />
-      <TextInput
-        style={styles.input}
-        placeholder="Data de nascimento"
-        placeholderTextColor="#999"
-        value={dateOfBirth}
-        onChangeText={setDateOfBirth}
-        keyboardType="phone-pad"
-        autoCapitalize="none"
-      />
-      <TextInput
-        style={styles.input}
-        placeholder="E-mail"
-        placeholderTextColor="#999"
-        value={email}
-        onChangeText={setEmail}
-        keyboardType="email-address"
-        autoCapitalize="none"
-      />
+          <TextInput
+            style={styles.input}
+            placeholder="Nome"
+            placeholderTextColor="#999"
+            value={name}
+            onChangeText={setName}
+            keyboardType="name-phone-pad"
+            autoCapitalize="none"
+          />
+          <MaskInput
+            style={styles.input}
+            placeholder="Data de nascimento"
+            mask={Masks.DATE_DDMMYYYY}
+            placeholderTextColor="#999"
+            value={dateOfBirth}
+            onChangeText={setDateOfBirth}
+            keyboardType="phone-pad"
+            autoCapitalize="none"
+          />
+          <TextInput
+            style={styles.input}
+            placeholder="E-mail"
+            placeholderTextColor="#999"
+            value={email}
+            onChangeText={setEmail}
+            keyboardType="email-address"
+            autoCapitalize="none"
+          />
 
-      <TextInput
-        style={styles.input}
-        placeholder="Senha"
-        placeholderTextColor="#999"
-        value={password}
-        onChangeText={setPassword}
-        secureTextEntry
-      />
-      <TextInput
-        style={styles.input}
-        placeholder="Confirmar senha"
-        placeholderTextColor="#999"
-        value={confirmPassword}
-        onChangeText={setConfirmPassword}
-        secureTextEntry
-      />
+          <TextInput
+            style={styles.input}
+            placeholder="Senha"
+            placeholderTextColor="#999"
+            value={password}
+            onChangeText={setPassword}
+            secureTextEntry
+          />
+          <TextInput
+            style={styles.input}
+            placeholder="Confirmar senha"
+            placeholderTextColor="#999"
+            value={confirmPassword}
+            onChangeText={setConfirmPassword}
+            secureTextEntry
+          />
 
-      <TouchableOpacity style={styles.button} onPress={handleLogin}>
-        <Text style={styles.buttonText}>Criar conta</Text>
-      </TouchableOpacity>
+          <TouchableOpacity style={styles.button} onPress={handleLogin}>
+            <Text style={styles.buttonText}>Criar conta</Text>
+          </TouchableOpacity>
 
-      <TouchableOpacity onPress={() => navigation.goBack()}>
-        <Text style={styles.registerLink}>Já tenho uma conta</Text>
-      </TouchableOpacity>
-    </View>
+          <TouchableOpacity onPress={() => navigation.goBack()}>
+            <Text style={styles.registerLink}>Já tenho uma conta</Text>
+          </TouchableOpacity>
+        </ScrollView>
+      </TouchableWithoutFeedback>
+    </KeyboardAvoidingView>
   );
 }

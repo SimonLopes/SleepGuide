@@ -22,13 +22,10 @@ export function calculateSleepTimes(wakeTime: string): CalculateTimesData {
 
   const [wakeHour, wakeMinute] = wakeTime.split(":").map(Number);
 
-  // Horário atual
   const now = new Date();
-  console.log("sleepDate:", now.getHours(), now.getMinutes());
   let wakeDate = new Date();
   wakeDate.setHours(wakeHour, wakeMinute, 0, 0);
 
-  // Se o horário já passou hoje, ajusta para o próximo dia
   if (wakeDate <= now) {
     wakeDate.setDate(wakeDate.getDate() + 1);
   }
