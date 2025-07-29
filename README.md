@@ -5,7 +5,7 @@ O app conta ainda com **widget para iOS** e integração com **Firebase** para a
 
 ### Apresentação
 
-<img src="./assets/screenshots/apresentation.png" alt="Apresentação" width="300" />
+<img src="./assets/screenshots/apresentation.png" alt="Apresentação" width="600" />
 
 ## ✨ Funcionalidades
 
@@ -74,4 +74,5 @@ Este projeto está sob a licença MIT.
 ## 🙋‍♂️ Autor
 
 Desenvolvido com carinho por Simon Lopes.
-[LinkedIn](https://www.linkedin.com/in/simon-lopes). • [GitHub](https://github.com/SimonLopes)
+
+[LinkedIn](https://www.linkedin.com/in/simon-lopes) • [GitHub](https://github.com/SimonLopes)
