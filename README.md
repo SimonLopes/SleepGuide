@@ -4,7 +4,8 @@ O **SleepGuide** é um aplicativo desenvolvido com **React Native** e **Swift** 
 O app conta ainda com **widget para iOS** e integração com **Firebase** para autenticação e dados em nuvem.
 
 ### Apresentação
-<img src="./screenshots/apresentation.png" alt="Apresentação" width="300" />
+
+<img src="./assets/screenshots/apresentation.png" alt="Apresentação" width="300" />
 
 ## ✨ Funcionalidades
 
@@ -19,19 +20,24 @@ O app conta ainda com **widget para iOS** e integração com **Firebase** para a
 ## 📱 Telas do app
 
 ### 🔐 Login
-<img src="./screenshots/login.png" alt="Tela de login" width="300" />
+
+<img src="./assets/screenshots/login.png" alt="Tela de login" width="300" />
 
 ### 🏠 Home
-<img src="./screenshots/home.png" alt="Tela home" width="300" />
+
+<img src="./assets/screenshots/home.png" alt="Tela home" width="300" />
 
 ### ⚙️ Configurações
-<img src="./screenshots/settings.png" alt="Tela de configurações" width="300" />
+
+<img src="./assets/screenshots/settings.png" alt="Tela de configurações" width="300" />
 
 ### 👤 Conta
-<img src="./screenshots/account.png" alt="Tela de conta" width="300" />
+
+<img src="./assets/screenshots/account.png" alt="Tela de conta" width="300" />
 
 ### 🧩 Widget
-<img src="./screenshots/widget.png" alt="Tela de conta" width="300" />
+
+<img src="./assets/screenshots/widget.png" alt="Tela de conta" width="300" />
 
 ---
 
@@ -59,12 +65,11 @@ npm install
 npx expo start
 ```
 
-
 > ⚠️ Para rodar o widget no iOS, é necessário abrir o projeto nativo no Xcode (ios/) e configurar o compartilhamento de dados entre o app e o widget com App Groups.
 
 ## 📄 Licença
-Este projeto está sob a licença MIT.
 
+Este projeto está sob a licença MIT.
 
 ## 🙋‍♂️ Autor
 
